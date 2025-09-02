@@ -1,0 +1,102 @@
+# Data File 
+# By: Leonard Willen
+# Date: 22.07.2025
+# Licence: CC BY 4.0 - https://creativecommons.org/licenses/by/4.0/
+# Comment: This is test dummy data. More realistic values can be derived from Hölling et al. 
+# 2021 - Windstahl aus Norddeutschland and inserted in this template
+
+################################################################################################
+############################################  Sets  ############################################
+################################################################################################
+
+# All production steps, or equipment of the modeled industry plant (e ∈ E)
+E: ['e_EAF']
+
+# All virtual versions of an equipment e, due to the different types of raw materials and 
+#  production modes (v ∈ Ve)
+V: 
+    e_EAF: ['v_60%','v_80%','v_100%']
+#    e_EAF: ['v_100%']
+
+
+################################################################################################
+#########################################  Parameters  #########################################
+################################################################################################
+
+minutes_per_step: 10  # How many minutes are in one time step of the load profile
+steel_demand: 1000000 # The mass of steel which needs to be produced in one year [t]
+netto_power_wind_park: 900 # Megawatt
+
+#######################################  Reduction Unit  #######################################
+
+max_capacity_electrolyser: 600  # maximal capacity of electrolyser [MW]
+min_consumption_electrolyser: 0  # minimum power consumption of reduction unit [MW]
+efficiency_electrolyser: 0.65 # efficiency of water electrolysis producing hydrogen [%] 
+
+capacity_h2_tank: 10000 # Maximal capacity of hydrogen tank [MWh] 
+initial_h2_tank_filling: 0 # Initial filling of hydrogen tank in regards maximal capacity [%]
+
+DRI_init_content: 0  # Initial Content of DRI [tons]
+
+h2_MWh_per_DRI: 2.079 # Quantity of Hydrogen per ton of direct reduced iron [MWh]
+
+use_storage_goals: False
+
+#########################################  Fuel Cell  ##########################################
+
+fuel_cell_capacity: 100 # Maximal power capacity of fuel cell reverting H2 to Electricity [MW]
+fuel_cell_efficiency: 0.7 # Efficiency of fuel cell reverting hydrogen to Electricity [%]
+
+
+########################################  Steel making  ########################################
+
+batch_load_profile:
+    e_EAF:  # 10 minute steps [MW]
+        v_60%: [50, 100, 100, 100, 50, 10]
+        v_80%: [65, 130, 130, 130, 65, 10]
+        v_100%: [80, 160, 160, 160, 80, 10]
+
+DRI_demand:  # DRI needed for start of one batch in tons [t]
+    e_EAF: 
+        v_60%: 75
+        v_80%: 100
+        v_100%: 130
+        
+output_steel_products: # Output of steel products produced in one batch [t]
+    e_EAF: 
+        v_60%: 100
+        v_80%: 140  
+        v_100%: 180 
+
+virtual_equipment_duration:  # number of timesteps of a batch in virtual equipment
+    e_EAF: 
+        v_60%: 4  # lower than amount of time steps in batch_load_profile profile because of  
+        v_80%: 4  # storage usage, which buffers at start load jump and refills at the end 
+        v_100%: 4 # as well as base load of steel making unit
+
+T_down:  # Minimum downtime after production of batch in equipment e in time steps
+    e_EAF: 2
+
+
+##########################################  Rolling  ###########################################
+
+rolling_mass_efficiency:  # Efficiency of mass conversion from steel billets to rolled steel [%]
+    e_EAF: 0.90
+
+rolling_duration:  # Number of timesteps it takes to cast and roll produced steel  
+    e_EAF: 6
+
+rolling_cap:  # Nominal capacity of Rolling Unit [MW]
+    e_EAF: 70
+
+####################################### Grid Connection ########################################
+
+draw_power_from_grid: False
+
+# Grid charges when power is drawn from grid 
+grid_charge_power_price: 0 # Grid charge for maximum power consumption from grid [€/MW/month] 
+grid_charge_energy_price: 0 # Grid charge per energy unit [€/MWh]
+
+given_goal_load: False  # set to true if objective is stability
+goal_load: 0 # Load in MW which is goal to reach if objective is stability
+
